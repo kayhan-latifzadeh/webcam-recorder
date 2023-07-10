@@ -1,20 +1,55 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+'''
+WebCamRecorder
+
+Dependencies:
+- pyautogui
+
+Authors:
+- Kayhan Latifzadeh <name.surname@uni.lu>
+'''
+
+
+# Load std libs.
 import numpy as np
 import cv2 as cv
 import time
-import sys
+import argparse
+import os
 
-def record_video(filename):
+
+parser = argparse.ArgumentParser(description='Record video from webcam',
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('--webcam_number', default=0, type=int,
+                    help='the number of webcam, if you have more than 1 webcam')
+parser.add_argument('--dir', default="",
+                    help='directory to save the files (video, and log) in it')
+parser.add_argument('--fid', default=f"webcam_rec_{int(time.time() * 1000)}",
+                    help='file name for the recorded video and log file')
+parser.add_argument('--filename_prefix', default="",
+                    help='prefix for the file names (video, and log files)')
+parser.add_argument('--filename_postfix', default="REC",
+                    help='postfix for the file names (video, and log files)')
+
+args = parser.parse_args()
 
 
-    log_file_path = filename + '_REC.log'
-    video_file_path = filename + 'REC.mp4'
+# Load 3rd party libs.
+
+
+def record_video(filename, webcam_number):
+
+    log_file_path = f"{filename}.log"
+    video_file_path = f"{filename}.mp4"
 
     log_file = open(log_file_path, 'w')
 
     timestamp = int(time.time() * 1000)
 
-
-    capture = cv.VideoCapture(0)
+    capture = cv.VideoCapture(webcam_number)
 
     size = (int(capture.get(cv.CAP_PROP_FRAME_WIDTH)),
             int(capture.get(cv.CAP_PROP_FRAME_HEIGHT)))
@@ -41,7 +76,6 @@ def record_video(filename):
             is_first_frame = False
             break
 
-
     capture.release()
     out.release()
     cv.destroyAllWindows()
@@ -49,11 +83,9 @@ def record_video(filename):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "-fid":
-        if len(sys.argv) > 2:
-            filename = sys.argv[2]
-            record_video(filename)
-        else:
-            print("Please provide a filename after -fid.")
-    else:
-        print("Please use -fid followed by a filename to specify the output file.")
+    filename = args.fid
+    if args.filename_prefix != "":
+        filename = f"{args.filename_prefix}_{filename}"
+    if args.filename_postfix != "":
+        filename = f"{filename}_{args.filename_postfix}"
+    record_video(filename=filename, webcam_number=args.webcam_number)
