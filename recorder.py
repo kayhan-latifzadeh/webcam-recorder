@@ -8,7 +8,7 @@ Dependencies:
 - pyautogui
 
 Authors:
-- Kayhan Latifzadeh <name.surname@uni.lu>
+- Kayhan Latifzadeh <kayhan DOT latifzade AT_SYMBOL uni DOT lu>
 '''
 
 
